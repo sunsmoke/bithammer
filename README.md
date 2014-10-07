@@ -5,6 +5,8 @@
     NOTE: BitHammer is FOR RESEARCH PURPOSES ONLY.
           Get permission from a network's owner before using it.  
           You assume all responsibility for it's use.
+          
+![BitHammer, The BanHammer for BitTorrent](http://i.imgur.com/s84Kca4.jpg)
 
 BitTorrent is ok.  Using BitTorrent on your own network is your own business.  Using BitTorrent on public wifi is not.  BitTorrent aggressively soaks up bandwidth and connections, rendering other programs useless, and other users and admins frustrated.
 
