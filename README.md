@@ -57,7 +57,7 @@ I am not a lawyer.  I recommend the courtesy of getting permission before using 
 
 ## BitHammer isn't working
 
-There are a variety of reasons it may not work.  
+There are a variety of reasons it may not work as you would like.  
 
  - The wifi access point may isolate users from each other, preventing LPD
  - BitTorrent clients may be on another sub-net, preventing LPD
@@ -71,7 +71,9 @@ Climate change, ocean fishery collapse, and crappy wifi are all tradgedies of th
 
 http://en.wikipedia.org/wiki/Tragedy_of_the_commons
 
-It's not personal.  It's just that your ignorance/selfishness is ruining things for everyone else.
+It's not personal.  It's just that your ignorance and selfishness are ruining things for everyone else.
+
+The best workaround to BitHammer is to get a 'private internet VPN' and run your BitTorrent traffic through that.  This will prevent BitHammer from banning you, keep your usage to levels the router can handle, and prevent the WiFi owner from getting file-sharing letters from lawyers.
 
 ## Are there better alternatives to BitHammer?
 
