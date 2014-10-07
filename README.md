@@ -19,21 +19,21 @@ This program:
 
 ## BitHammer on Linux:
 
-Install `python` and `scapy`:
+Install `python`, `scapy`, and `git` :
 
-    sudo apt-get install python python-scapy
+    sudo apt-get install python python-scapy git
 
 Run the program:
 
-    git clone <this repository>
+    git clone git@github.com:MichaelJCole/bithammer.git
     cd bithammer
     sudo python ./bithammer
 
-The `scapy` library requires `sudo` for root priviledges.  Built and tested with Python 2.7.6.  This is my first Python program :)
+The `scapy` network library requires `sudo` for root priviledges.  Built and tested with Python 2.7.6.  This is my first Python program :)
 
 ## BitHammer on Windows or MacOS
 
-In theory, BitHammer should work outside Linux, but I don't care to test it.  Code and documentation pull requests are welcome.  This may help install `scapy` - the networking library used:
+In theory, BitHammer should work outside Linux, but I don't care to test it.  Code and documentation pull requests are welcome.  This may help to install `scapy` - the networking library used:
 
     http://www.secdev.org/projects/scapy/doc/installation.html#platform-specific-instructions
 
@@ -47,9 +47,9 @@ The program then bans those users from the network via ARP Cache poisoning:
 
     http://en.wikipedia.org/wiki/ARP_spoofing
 
-Network Traffic to/from the banned computer is redirected to your computer, which then ignores it because it's improperly addressed.  This effectively bans the target from the network.  
+Network Traffic to/from the banned computer is redirected to your computer, which your computer ignores because it's improperly addressed.  This effectively bans the target from the network.
 
-ARP cache poisoning then continues as long as the program is running.  Restarting the program clears the ban list.
+ARP cache poisoning continues as long as the program is running.  Restarting the program clears the ban list.  It may take some time for the ban to clear.
 
 ## Is this legal?
 
@@ -73,7 +73,11 @@ http://en.wikipedia.org/wiki/Tragedy_of_the_commons
 
 It's not personal.  It's just that your ignorance and selfishness are ruining things for everyone else.
 
-The best workaround to BitHammer is to get a 'private internet VPN' and run your BitTorrent traffic through that.  This will prevent BitHammer from banning you, keep your usage to levels the router can handle, and prevent the WiFi owner from getting file-sharing letters from lawyers.
+__The best workaround to BitHammer is to get a 'private internet VPN'__ and run your BitTorrent traffic through that.  Google it.  This will:
+
+  1. Prevent BitHammer from banning you, 
+  2. Keep your usage to levels the router can handle, 
+  3. Prevent the WiFi owner from getting file-sharing letters from lawyers.
 
 ## Are there better alternatives to BitHammer?
 
