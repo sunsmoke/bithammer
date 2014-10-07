@@ -29,7 +29,7 @@ Run the program:
     cd bithammer
     sudo python ./bithammer
 
-The `scapy` library requires `sudo` for root priviledges.
+The `scapy` library requires `sudo` for root priviledges.  Built and tested with Python 2.7.6.  This is my first Python program :)
 
 ## BitHammer on Windows or MacOS
 
