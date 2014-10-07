@@ -1,18 +1,23 @@
 # BitHammer
 
-#### The last conversation you'll ever have about BitTorrent using up the network.
+#### The BitTorrent BanHammer.
 
-    NOTE: This program is aggressive.  Before using it, you should get permission from the owner of any network you are using.  You assume all responsibility for it's use.
+    NOTE: BitHammer is FOR RESEARCH PURPOSES ONLY.
+          Get permission from a network's owner before using it.  
+          You assume all responsibility for it's use.
 
-BitTorrent is ok.  Using BitTorrent on public wifi is not.  BitTorrent aggressively soaks up bandwidth and connections, rendering other programs useless and users frustrated.
+BitTorrent is ok.  Using BitTorrent on your own network is your own business.  Using BitTorrent on public wifi is not.  BitTorrent aggressively soaks up bandwidth and connections, rendering other programs useless, and other users and admins frustrated.
 
 http://askubuntu.com/questions/16680/using-a-bittorrent-client-slows-down-internet-connection
 
-After a year of traveling, struggling with broken wifi spots, and talking with frustrated helpless non-technical people who owned/managed them, I wrote this script to help network users and owners.
+Over a year of traveling, I've consistently struggled with broken wifi spots overloaded with torrent traffic.  After talking with the frustrated non-technical people who owned/managed them, I wrote this program to help network users and owners.
 
-This program listens for BitTorrent clients on the network, adds their IP's to a ban list, then bans them from the network for as long as the program is running.
+This program:
+  1. Listens for BitTorrent clients on the network, 
+  2. Adds their IPs and MACs to a ban list, 
+  3. Bans them from the network for as long as the program is running.
 
-## To run on Linux:
+## BitHammer on Linux:
 
 Install `python` and `scapy`:
 
@@ -24,11 +29,11 @@ Run the program:
     cd bithammer
     sudo python ./bithammer
 
-The `scapy` library requires `root` priviledges.
+The `scapy` library requires `sudo` for root priviledges.
 
-## To run on Windows or MacOS
+## BitHammer on Windows or MacOS
 
-Pull requests welcome.  This may help:
+In theory, BitHammer should work outside Linux, but I don't care to test it.  Code and documentation pull requests are welcome.  This may help install `scapy` - the networking library used:
 
     http://www.secdev.org/projects/scapy/doc/installation.html#platform-specific-instructions
 
@@ -40,41 +45,52 @@ The program listens for BitTorrent users advertising themselves via LPD:
 
 The program then bans those users from the network via ARP Cache poisoning:
 
-    http://danmcinerney.org/arp-poisoning-with-python-2/
+    http://en.wikipedia.org/wiki/ARP_spoofing
 
-Network Traffic to/from the banned computer is redirected to your computer, which then ignores it.  The program continues to poison the ARP cache for any computers advertising LDP.
+Network Traffic to/from the banned computer is redirected to your computer, which then ignores it because it's improperly addressed.  This effectively bans the target from the network.  
+
+ARP cache poisoning then continues as long as the program is running.  Restarting the program clears the ban list.
 
 ## Is this legal?
 
-I am not a lawyer.  Get permission before using it on someone else's network.
+I am not a lawyer.  I recommend the courtesy of getting permission before using it on someone else's network.
 
-## It's not working
+## BitHammer isn't working
 
 There are a variety of reasons it may not work.  
 
- - You're bandwidth problem may unrelated to BitTorrent
+ - The wifi access point may isolate users from each other, preventing LPD
+ - BitTorrent clients may be on another sub-net, preventing LPD
  - BitTorrent clients may not be advertising with LDP
- - The wifi access point may isolate users from each other
+ - You're bandwidth problem may unrelated to BitTorrent
  - Something else
 
 ## I think I'm getting banned!  Are you anti-bittorrent, pro-hitler, and anti-puppies?
 
-Climate change, ocean collapse, and crappy wifi are all tradgedies of the commons.
+Climate change, ocean fishery collapse, and crappy wifi are all tradgedies of the commons.
 
 http://en.wikipedia.org/wiki/Tragedy_of_the_commons
 
-It's not personal.  It's just that you're breaking it for everyone else.
+It's not personal.  It's just that your ignorance/selfishness is ruining things for everyone else.
 
-## Can I permanently ban someone?
+## Are there better alternatives to BitHammer?
 
-Yes, log into your router and add the mac address to the ban list:
+Yes, alternatives include:
 
-http://blog.dlink.com/how-to-block-devices-from-your-home-network/
+  1. Block BitTorrent on your router
+  2. Configuring traffic QOS on the router
+  2. Banning user's on the router
 
-(This is specific to your router and you'll need the router admin password.)
+These are advanced router configurations and may be confusing to the average user and 'home' router equipment:
 
-The mac address has the :'s in it:
+Login to your router with the admin password:
 
-    Starting BitHammer.
-      = 192.168.1.7 -> 00:11:22:33:44:55, new ban added
+  1. Get your router's IP address (e.g. 192.168.1.1)
+  2. Open http://192.168.1.1 in a web browser
+  3. Login with your admin password
 
+Configure your router:
+  
+  1. To block BitTorrent, block ports 6881 to 6999 (easy, but not always effective)
+  2. To block devices, use the MAC ids from BitHammer: http://blog.dlink.com/how-to-block-devices-from-your-home-network/ 
+  3. To slow down BitTorrent so other traffic takes precedence, configure "Traffic Shaping" or "Quality of Service (QoS)" - this depends on your router.
