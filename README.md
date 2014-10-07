@@ -76,7 +76,7 @@ It's not personal.  It's just that your ignorance and selfishness are ruining th
 __The best workaround to BitHammer is to get a 'private internet VPN'__ and run your BitTorrent traffic through that.  Google it.  This will:
 
   1. Prevent BitHammer from banning you, 
-  2. Keep your usage to levels the router can handle, 
+  2. Keep your usage to levels home internet routers can handle, 
   3. Prevent the WiFi owner from getting file-sharing letters from lawyers.
 
 ## Are there better alternatives to BitHammer?
