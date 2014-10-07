@@ -65,7 +65,7 @@ There are a variety of reasons it may not work as you would like.
  - You're bandwidth problem may unrelated to BitTorrent
  - Something else
 
-## I think I'm getting banned!  Are you anti-bittorrent, pro-hitler, and anti-puppies?
+## I'm banned!  Are you anti-bittorrent, pro-hitler, and anti-puppies?
 
 Climate change, ocean fishery collapse, and crappy wifi are all tradgedies of the commons.
 
