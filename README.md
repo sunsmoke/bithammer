@@ -2,9 +2,12 @@
 
 <img align="right" alt="BitHammer, The BanHammer for BitTorrent" src="http://i.imgur.com/s84Kca4.jpg" />
 
-    NOTE: BitHammer is FOR RESEARCH PURPOSES ONLY.
-          Get permission from a network's owner before using it.  
-          You assume all responsibility for it's use.
+    NOTE: BitHammer is FOR RESEARCH 
+          PURPOSES ONLY.
+          Get permission from a network's 
+          owner before using it.  
+          You assume all responsibility 
+          for it's use.
           
 
 #### The BitTorrent BanHammer.
