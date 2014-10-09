@@ -4,9 +4,9 @@
 
     NOTE: BitHammer is FOR RESEARCH 
           PURPOSES ONLY.
-    Get permission from a network's 
+      Get permission from a network's 
           owner before using it.  
-    You assume all responsibility 
+      You assume all responsibility 
           for it's use.
           
 
