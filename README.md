@@ -39,9 +39,7 @@ The `scapy` network library requires `sudo` for root priviledges.  Built and tes
 
 ## BitHammer on Windows or MacOS
 
-In theory, BitHammer should work outside Linux, but I don't care to test it.  Code and documentation pull requests are welcome.  This may help to install `scapy` - the networking library used:
-
-    http://www.secdev.org/projects/scapy/doc/installation.html#platform-specific-instructions
+In theory, BitHammer should work outside Linux, but I don't care to test it.  Code and documentation pull requests are welcome.  [This may help]( http://www.secdev.org/projects/scapy/doc/installation.html#platform-specific-instructions) to install `scapy` - the networking library used.
 
 ## How does it work?
 
